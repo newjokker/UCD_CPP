@@ -1,0 +1,17 @@
+FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu16.04
+
+RUN apt-get update && apt-get install vim -y
+
+RUN mkdir /v0.0.1
+
+WORKDIR /v0.0.1
+
+COPY ./v0.0.1 /v0.0.1
+
+RUN mv /v0.0.1/so_dir/* /usr/lib/ 
+
+CMD ["/v0.0.1/start_server.sh"]
+
+
+# docker run --gpus device=0 -v /home/disk2/prebase_dete/save_xml_dir:/usr/save_xml_dir -v /home/disk2/prebase_dete/ucd_cache:/usr/ucd_cache_dir -v /home/disk2/prebase_dete/dete_logs:/usr/dete_log_dir -v /home/disk2/prebase_dete/load_ucd_dir:/usr/load_ucd_dir --restart=always  -e MULTI_COUNT=4  -d dete_server:v0.1.7
+
