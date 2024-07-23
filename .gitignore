@@ -13,7 +13,7 @@ src\appQingZang\pluginQZ\*.py[cod]
 .vscode/
 /dist/
 /build/
-#/bin/
+/bin/
 /libtorch/
 /data/
 /res/
