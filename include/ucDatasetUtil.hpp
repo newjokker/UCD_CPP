@@ -297,7 +297,7 @@ class UCDatasetUtil
         void parse_yolo_train_data(std::string img_dir, std::string save_dir, std::string ucd_path, std::vector<std::string> label_list = {});
         
         // 查看库中的 ucd
-        std::map< std::string, std::vector<std::string> > search_ucd(std::string assign_uc="", bool print_info=true);
+        std::map< std::string, std::vector<std::string> > search_ucd(std::string assign_uc="", bool print_info=true, bool json_info=false, std::string name="");
         
         // 查看库中指定 ucd 的信息
         std::map< std::string, std::string > get_ucd_json_info(std::string ucd_json_name);

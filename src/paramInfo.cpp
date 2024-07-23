@@ -352,13 +352,16 @@ void UcdParamOpt::load_param_info()
     // check
     ParamInfo * param_check = new ParamInfo("check");
     param_check->group = "sync";
-    param_check->grammar = "ucd check";
-    param_check->args_info["--assign_uc"] = "查找包含某一个 uc 的所有 json 文件（只查找 official 数据库中最外层的 ucd:json）";
+    param_check->grammar = "ucd check {ucd_json_name}";
+    param_check->args_info["--assign_uc"]   = "查找包含某一个 uc 的所有 json 文件（只查找 official 数据库中最外层的 ucd:json）";
+    param_check->args_info["--name"]        = "查找包含某一个 关键字 的所有 json 文件";
+    param_check->args_info["-c"]            = "在 json 路径最后打印 json 中 uc 的个数";
     param_check->english_explain = "get all ucd official|customer from server";
     param_check->chinese_explain = "查看服务器中所有 ucd 信息，包括官方 ucd 和 自定义 ucd";
     param_check->demo.push_back("ucd check                          (查看所有云端的 ucd)");   
     param_check->demo.push_back("ucd check --assign_uc Dka09ai      (查看 official 最外层 ucd:json 中包含 Dka09ai 进行返回)");   
-    param_check->demo.push_back("ucd check | grep fzc               (查看所有云端中带有 fzc 关键字的 ucd)"); 
+    param_check->demo.push_back("ucd check test/test_data           (查看所有云端数据集 test/test_data 的基础信息)"); 
+    param_check->demo.push_back("ucd check -c                       (查看所有云端数据集, 打印 json 中 uc 的个数)"); 
     UcdParamOpt::add_param(param_check);
     
     // save

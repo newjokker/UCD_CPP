@@ -484,6 +484,19 @@ int main(int argc_old, char ** argv_old)
     }
     else if(command_1 == "check")
     {
+
+        bool print_uc_count = false;
+        if(short_args.count("c") > 0)
+        {
+            print_uc_count = true;
+        }
+
+        std::string name = "";
+        if(long_args.count("name") > 0)
+        {
+            name = long_args["name"];
+        }
+
         std::string assign_uc = "";
         if(long_args.count("assign_uc") > 0)
         {
@@ -492,7 +505,7 @@ int main(int argc_old, char ** argv_old)
 
         if(argc == 2)
         {
-            ucd_util->search_ucd(assign_uc);
+            ucd_util->search_ucd(assign_uc, true, print_uc_count, name);
         }
         else if(argc == 3)
         {
@@ -510,6 +523,7 @@ int main(int argc_old, char ** argv_old)
                 std::cout << "----------------------------------------------------" << std::endl;
                 std::cout << "dataset_name  :   " << ucd_info["dataset_name"] << std::endl;
                 std::cout << "uc_count      :   " << ucd_info["uc_count"] << std::endl;
+                std::cout << "file_size     :   " << ucd_info["size"] << std::endl;
                 std::cout << "json_path     :   " << ucd_info["json_path"] << std::endl;
                 std::cout << "model_name    :   " << ucd_info["model_name"] << std::endl;
                 std::cout << "model_version :   " << ucd_info["model_version"] << std::endl;

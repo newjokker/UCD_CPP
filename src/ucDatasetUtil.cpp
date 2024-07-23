@@ -3237,7 +3237,7 @@ void UCDatasetUtil::load_ucd_app(std::string version, std::string save_dir)
     }
 }
 
-std::map< std::string, std::vector<std::string> > UCDatasetUtil::search_ucd(std::string assign_uc, bool print_info)
+std::map< std::string, std::vector<std::string> > UCDatasetUtil::search_ucd(std::string assign_uc, bool print_info, bool json_info, std::string name)
 {
 
     std::map< std::string, std::vector<std::string> > all_ucd_path;
@@ -3278,9 +3278,26 @@ std::map< std::string, std::vector<std::string> > UCDatasetUtil::search_ucd(std:
 
         for(int i=0; i<data["official"].size(); i++)
         {
+
+            if(name != "")
+            {
+                if(data["official"][i].dump().find(name) == std::string::npos)
+                {
+                    continue;
+                }
+            }
+
             if(print_info)
             {
-                std::cout << "official : " << data["official"][i] << std::endl;
+                if(json_info)
+                {
+                    std::map< std::string, std::string > ucd_info = UCDatasetUtil::get_ucd_json_info(data["official"][i]);
+                    std::cout << "official : " << data["official"][i] << ", " << WARNNING_COLOR << ucd_info["uc_count"] << STOP_COLOR << std::endl;
+                }
+                else
+                {
+                    std::cout << "official : " << data["official"][i] << std::endl;
+                }
             }
             all_ucd_path["official"].push_back(data["official"][i]);
         }
@@ -3288,9 +3305,26 @@ std::map< std::string, std::vector<std::string> > UCDatasetUtil::search_ucd(std:
         // official
         for(int i=0; i<data["customer"].size(); i++)
         {
+
+            if(name != "")
+            {
+                if(data["customer"][i].dump().find(name) == std::string::npos)
+                {
+                    continue;
+                }
+            }
+
             if(print_info)
             {
-                std::cout << "customer : " << data["customer"][i] << std::endl;
+                if(json_info)
+                {
+                    std::map< std::string, std::string > ucd_info = UCDatasetUtil::get_ucd_json_info(data["customer"][i]);
+                    std::cout << "customer : " << data["customer"][i] << ", " << WARNNING_COLOR << ucd_info["uc_count"] << STOP_COLOR << std::endl;
+                }
+                else
+                {
+                    std::cout << "customer : " << data["customer"][i] << std::endl;
+                }
             }
             all_ucd_path["customer"].push_back(data["customer"][i]);
         }
@@ -3323,8 +3357,7 @@ std::map< std::string, std::string > UCDatasetUtil::get_ucd_json_info(std::strin
         }
         else
         {
-            int uc_count                = data["uc_count"];
-            ucd_info["uc_count"]        = std::to_string(uc_count);
+            ucd_info["uc_count"]        = data["uc_count"];
             ucd_info["add_time"]        = data["add_time"];
             ucd_info["dataset_name"]    = data["dataset_name"];
             ucd_info["describe"]        = data["describe"];
@@ -3334,6 +3367,7 @@ std::map< std::string, std::string > UCDatasetUtil::get_ucd_json_info(std::strin
             ucd_info["model_version"]   = data["model_version"];
             ucd_info["update_time"]     = data["update_time"];
             ucd_info["json_name"]       = data["json_name"];
+            ucd_info["size"]            = data["size"];
         }
     }
     else
@@ -3342,7 +3376,6 @@ std::map< std::string, std::string > UCDatasetUtil::get_ucd_json_info(std::strin
     }
 
     return ucd_info;
-
 }
 
 bool UCDatasetUtil::save_remote_ucd(std::string save_dir)
