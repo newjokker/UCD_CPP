@@ -437,7 +437,7 @@ void UcdParamOpt::load_param_info()
     param_delete->grammar = "ucd show {uc}";
     param_delete->english_explain = "ucd delete ucd_name";
     param_delete->chinese_explain = "删除在线数据集,无法删除官方数据集";  
-    param_delete->demo.push_back("ucd delete del\\aqm_ps                (删除云上 del\\aqm_ps 地址的 ucd 数据集)");
+    param_delete->demo.push_back("ucd delete del\\\\aqm_ps                (删除云上 del\\\\aqm_ps 地址的 ucd 数据集)");
     UcdParamOpt::add_param(param_delete);
     
     // load

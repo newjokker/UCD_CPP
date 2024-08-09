@@ -137,6 +137,7 @@ class tqdm {
                     period = (int)( std::min(std::max((1.0/25)*curr/dt_tot,1.0), 5e5));
                     smoothing = 25*3;
                 }
+
                 double peta = (tot-curr)/avgrate;
                 double pct = (double)curr/(tot*0.01);
                 if( ( tot - curr ) <= period ) {

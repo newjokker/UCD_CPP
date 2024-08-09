@@ -1088,7 +1088,7 @@ void UCDataset::save_to_yolo_train_txt_with_assign_uc(std::string save_path, std
                     }
                     else
                     {
-                        std::cout << "x, y, w, h, not in range [0, 1] : " << x << ", "<< y << ", " << w << ", " << h << std::endl;
+                        std::cout << uc << ", " << "x, y, w, h, not in range [0, 1] : " << x << ", "<< y << ", " << w << ", " << h << std::endl;
                         continue;
                     }
                 }
@@ -3472,10 +3472,13 @@ void UCDatasetUtil::delete_ucd(std::string std_name)
 {
     httplib::Client cli(UCDatasetUtil::root_url);
     auto res = cli.Delete("/ucd/delete/" + std_name + ".json");
-    if(res == nullptr)
+    if(res != nullptr)
     {
-        std::cout << ERROR_COLOR << "delete failed !" << STOP_COLOR << std::endl;
-        throw "delete failed !";
+        if(res->status != 200)
+        {
+            std::cout << ERROR_COLOR << "delete failed ! \ncheck if uc_dataset exists by : ucd check | grep ucd_name" << STOP_COLOR << std::endl;
+            throw "delete failed !";
+        }
     }
 }
 

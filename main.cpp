@@ -101,14 +101,6 @@ using namespace std;
 
 // TODO: 做成 python 类型，输入 python 之后直接进入 pythyon 的环境变量，一直到 按 ctrl + c 才退出
 
-// TODO: map 最后的结果画图出来，可以画简单点的图，找 C++ 或者 opencv 的画图软件
-
-// TODO: map 计算结果有问题
-
-// TODO: 多个模型和 gt 进行对比，可以把多条曲线画在一个画纸上，
-
-// TODO: 指定默认使用的 python 环境，这样 c++ 直接调用 Python 做一些操作
-
 // TODO: AP50 的概念搞错了，是控制 iou 而不是 conf 
 
 // TODO: ucd + docker 可以根据模型 + config 直接跑出结果，貌似比 saturn_lib 更加方便
@@ -143,13 +135,9 @@ using namespace std;
 
 // TODO: 将 libtorch 搞成一个很大的可执行文件，这样很多事情就非常方便地进行处理了，甚至可以对 prebase 之类的直接生成一个 可执行文件，和 ucd 绑定起来，这样检测文件非常方便
 
-// TODO: 解决文件夹缓存权限的问题，
-
 // TODO: 可以不主动设置缓存文件夹，主动找一个路径，比如 /usr/local/ucd_cache ，这样用着就会很方便
 
 // TODO: 对那些没有标准化的数据也能分析，不一定要改为 uc 命名，可以设置是否改为 uc 命名
-
-// TODO: 设置为数据组模式，可以禁用一些功能
 
 // TODO: ucd 成为一门语言
 
@@ -279,7 +267,7 @@ int main(int argc_old, char ** argv_old)
     std::string app_dir     = "/home/ldq/Apps_jokker";
 
     // version
-    std::string app_version = "v4.10.2";
+    std::string app_version = "v4.10.5";
 
     // uci_info
     int volume_size         = 20;
@@ -546,8 +534,7 @@ int main(int argc_old, char ** argv_old)
             ucd_param_opt->print_command_info(command_1);
             return -1;
         }
-        std::string ucd_name = argv[2];
-        std::string ucd_save_path;
+        std::string ucd_name = argv[2];        std::string ucd_save_path;
 
         if(pystring::endswith(ucd_name, ".json"))
         {
@@ -2336,7 +2323,7 @@ int main(int argc_old, char ** argv_old)
             std::cout << "------------------------" << std::endl;
             std::cout << "is  uc count : " << is_uc << std::endl;
             std::cout << "not uc count : " << not_uc << std::endl;
-            std::cout << "check name format for (.jpg, .JPG, .png, .PNG. .xml, .json) : " << std::endl;
+            std::cout << "check name format for (.jpg, .JPG, .png, .PNG. .xml, .json) in sql " << std::endl;
             std::cout << "------------------------" << std::endl;
             delete sd_sql;
         }

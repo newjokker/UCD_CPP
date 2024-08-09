@@ -55,6 +55,10 @@ std::map<std::string, bool> SaturnDatabaseSQL::check_uc_by_mysql(std::vector<std
         std::cout << "saturndatabase sql connect error" << std::endl;
         SaturnDatabaseSQL::print_sql_info();
         throw "saturndatabase sql connect error";
+    }
+    else
+    {
+        std::cout << "saturndatabase sql connect success" << std::endl;
     }     
     
     // search

@@ -557,7 +557,7 @@ void DeteRes::save_to_yolo_txt(std::string txt_path, std::map<std::string, int>t
         }
         else
         {
-            std::cout << "x, y, w, h, not in range [0, 1] : " << x << ", "<< y << ", " << w << ", " << h << std::endl;
+            std::cout << txt_path << "," << "x, y, w, h, not in range [0, 1] : " << x << ", "<< y << ", " << w << ", " << h << std::endl;
             continue;
         }
     }
