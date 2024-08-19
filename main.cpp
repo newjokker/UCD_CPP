@@ -267,7 +267,7 @@ int main(int argc_old, char ** argv_old)
     std::string app_dir     = "/home/ldq/Apps_jokker";
 
     // version
-    std::string app_version = "v4.10.5";
+    std::string app_version = "v4.10.6";
 
     // uci_info
     int volume_size         = 20;
@@ -797,7 +797,12 @@ int main(int argc_old, char ** argv_old)
         {
             ucd_path = argv[2];
             assign_ucd_name = argv[3];
-            assign_ucd_name = pystring::strip(assign_ucd_name, ".json");
+            
+            if(pystring::endswith(assign_ucd_name, ".json"))
+            {
+                assign_ucd_name = assign_ucd_name.substr(0, assign_ucd_name.size()-5);
+            }
+            
             ucd_util->upload_ucd(ucd_path, assign_ucd_name);
         }
         else
