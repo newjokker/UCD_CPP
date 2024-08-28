@@ -267,7 +267,7 @@ int main(int argc_old, char ** argv_old)
     std::string app_dir     = "/home/ldq/Apps_jokker";
 
     // version
-    std::string app_version = "v4.10.6";
+    std::string app_version = "v4.10.7";
 
     // uci_info
     int volume_size         = 20;
@@ -276,7 +276,7 @@ int main(int argc_old, char ** argv_old)
     std::string castration_function;
 
     // cache dirmake
-    std::string cache_dir   = "";
+    std::string cache_dir;
 
     // get user name
     struct passwd* pwd;
@@ -288,13 +288,15 @@ int main(int argc_old, char ** argv_old)
     // if config_path is "~/ucdconfig.ini" can't read the file, so should get the user name for ~
     if(pw_name == "root")
     {
-        config_path = "/" + pw_name + "/ucdconfig.ini";
-        history_path = "/" + pw_name + "/.ucdhistory.txt";
+        config_path     = "/" + pw_name + "/ucdconfig.ini";
+        history_path    = "/" + pw_name + "/.ucdhistory.txt";
+        cache_dir       = "/" + pw_name + "/.cache";
     }
     else
     {
         config_path     = "/home/" + pw_name + "/ucdconfig.ini";
         history_path    = "/home/" + pw_name + "/.ucdhistory.txt";
+        cache_dir       = "/home/" + pw_name + "/.cache";
     }
 
     // read config
@@ -326,6 +328,7 @@ int main(int argc_old, char ** argv_old)
     else
     {
         xini_file_t xini_write(config_path);
+        xini_write["cache"]["dir"]      = cache_dir;
         xini_write["server"]["host"]    = host;
         xini_write["server"]["port"]    = port;
         xini_write["server"]["app_dir"] = app_dir;
@@ -361,6 +364,16 @@ int main(int argc_old, char ** argv_old)
     // init ucd_util
     UCDatasetUtil* ucd_util = new UCDatasetUtil(host, port, cache_dir);
 
+    if(!is_write_dir(ucd_util->cache_img_dir))
+    {
+        create_folder(ucd_util->cache_img_dir);
+    }
+    
+    if(!is_write_dir(ucd_util->cache_xml_dir))
+    {
+        create_folder(ucd_util->cache_xml_dir);
+    }
+    
     // ucd | ucd -v | ucd -V 
     if ((argc < 2) && (short_args.count("v")==0) && (short_args.count("V")==0))
     {
@@ -422,7 +435,7 @@ int main(int argc_old, char ** argv_old)
     }
 
     // must set ucd_cache 
-    if((! is_dir(cache_dir)) && (command_1 != "set") && (command_1 != "help")) 
+    if((! is_write_dir(cache_dir)) && (command_1 != "set") && (command_1 != "help")) 
     {
         std::cout << WARNNING_COLOR << "cache_dir not exists, edit ucdconfig.ini cache/dir : " << STOP_COLOR << std::endl;
         std::cout << "ucdconfig path : " << config_path << std::endl;
@@ -562,6 +575,13 @@ int main(int argc_old, char ** argv_old)
             ucd_param_opt->print_command_info("load");
             return -1;
         }
+
+        if(is_write_file(ucd_save_path))
+        {
+            std::cout << ERROR_COLOR << "save path exists : " << ucd_save_path << STOP_COLOR << std::endl;
+            return -1;
+        }
+
         ucd_util->load_ucd(ucd_name, ucd_save_path);
     }
     else if(command_1 == "delete")
@@ -2220,8 +2240,6 @@ int main(int argc_old, char ** argv_old)
     else if(command_1 == "attr")
     {
         // 修改 ucd 文件的属性信息，因为对于比较大的 ucd 打开自己去修改非常麻烦
-        // ucd attr dataset_name test_name
-
         if(argc == 5)
         {
             std::string ucd_path = argv[2];
@@ -2230,6 +2248,8 @@ int main(int argc_old, char ** argv_old)
                 std::string attr_name = argv[3];
                 std::string attr_value = argv[4];
                 UCDataset * ucd = new UCDataset(ucd_path);
+                ucd->parse_ucd(true);
+                ucd->update_time = getPythonStyleTimestamp();
                 ucd->change_attar(attr_name, attr_value);
                 delete ucd;
             }
@@ -3059,6 +3079,7 @@ int main(int argc_old, char ** argv_old)
             {
                 std::cout << "attr_name not in [dataset_name, object_info, size_info, model_name, model_version, add_time, update_time, describe, label_used, uc_list]" << std::endl;     
             }
+            ucd->update_time = getPythonStyleTimestamp();
             ucd->save_to_ucd(save_ucd_path);
             return -1;
         }
@@ -3362,6 +3383,7 @@ int main(int argc_old, char ** argv_old)
                 std::set<std::string> tags = {iter->first};
                 each_ucd->filter_by_tags(tags);
                 each_ucd->drop_empty_uc();
+                each_ucd->update_time=getPythonStyleTimestamp();
                 each_ucd->save_to_ucd(each_save_path);
                 delete each_ucd;
                 iter++;
@@ -3529,6 +3551,7 @@ int main(int argc_old, char ** argv_old)
             UCDataset* ucd = new UCDataset(ucd_path);
             ucd->parse_ucd(true);
             ucd->update_tags(tag_map);
+            ucd->update_time = getPythonStyleTimestamp();
             ucd->save_to_ucd(save_path);
             delete ucd;
         }
@@ -3959,6 +3982,7 @@ int main(int argc_old, char ** argv_old)
             UCDataset *ucd = new UCDataset(ucd_path);
             ucd->parse_ucd(true);
             ucd->do_augment(x1, x2, y1, y2, is_relative);
+            ucd->update_time = getPythonStyleTimestamp();
             ucd->save_to_ucd(save_path);
             delete ucd;
             return 1;

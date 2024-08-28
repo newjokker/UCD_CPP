@@ -17,6 +17,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "include/fileOperateUtil.hpp"
+#include <chrono>
 
 #define ERROR_COLOR         "\x1b[1;31m"    // 红色
 #define HIGHTLIGHT_COLOR    "\033[1;35m"    // 品红
@@ -276,4 +277,31 @@ int post_v2(std::string img_server_host, int img_server_port, std::string ucd_pa
 
     delete ucd;
     return 1;
+}
+
+double getPythonStyleTimestamp() 
+{
+    using namespace std::chrono;
+    auto now = system_clock::now();
+    auto duration = now.time_since_epoch();
+    double timestamp = duration.count() / double(system_clock::period::den);
+    return timestamp;
+}
+
+std::string timestampToString(double timestamp) 
+{
+    using namespace std::chrono;
+
+    // 将时间戳转换为系统时间点
+    auto ts = time_t(timestamp);
+    auto time_point = system_clock::from_time_t(ts);
+
+    // 获取当前时间的本地时间
+    std::tm tm = *std::localtime(&ts);
+
+    // 创建一个stringstream用于格式化输出
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+
+    return oss.str();
 }

@@ -23,6 +23,8 @@
 #include <cstdlib>
 #include <openssl/bio.h>
 #include <openssl/evp.h>
+#include <chrono>
+#include "include/ucd_tools.hpp"
 
 using json = nlohmann::json;
 using namespace jotools;
@@ -35,8 +37,6 @@ using namespace jotools;
 
 
 // CPP 写服务端 refer : https://blog.csdn.net/canlynetsky/article/details/119083255
-
-// 自己写的服务，上传下载大文件出错的问题，
 
 
 // 将36进制数转换为10进制数
@@ -362,14 +362,18 @@ void UCDataset::print_ucd_info()
     // print statistics res
     if(is_file(UCDataset::json_path))
     {
+
+        std::string add_time_str    = timestampToString(UCDataset::add_time);
+        std::string update_time_str = timestampToString(UCDataset::update_time);
+
         // json 属性
         std::cout << "--------------------------------" << std::endl;
         std::cout << "dataset_name      : " << UCDataset::dataset_name << std::endl;
         std::cout << "uc_count          : " << UCDataset::uc_list.size() << std::endl;
         std::cout << "model_name        : " << UCDataset::model_name << std::endl;
         std::cout << "model_version     : " << UCDataset::model_version << std::endl;
-        std::cout << "add_time          : " << UCDataset::add_time << std::endl;
-        std::cout << "update_time       : " << UCDataset::update_time << std::endl;
+        std::cout << "add_time          : " << add_time_str << std::endl;
+        std::cout << "update_time       : " << update_time_str << std::endl;
         std::cout << "describe          : " << UCDataset::describe << std::endl;
         std::cout << "label_used        : " << UCDataset::label_used.size() <<std::endl;
         std::cout << "img_size_count    : " << UCDataset::size_info.size() <<std::endl;
@@ -536,7 +540,7 @@ std::map<std::string, std::map<std::string, int> > UCDataset::count_volume_tags(
 
 void UCDataset::change_attar(std::string attr_name, std::string attr_value)
 {
-    UCDataset::parse_ucd(true);
+    // UCDataset::parse_ucd(true);
     if(attr_name == "dataset_name")
     {
         UCDataset::dataset_name = attr_value;
@@ -1515,7 +1519,7 @@ void UCDataset::get_sub_ucd(int sub_count, bool is_random, std::string save_path
     new_ucd->model_name     = UCDataset::model_name;
     new_ucd->describe       = UCDataset::describe;
     new_ucd->add_time       = UCDataset::add_time;
-    new_ucd->update_time    = -1;
+    new_ucd->update_time    = getPythonStyleTimestamp();
     new_ucd->label_used     = UCDataset::label_used;
     
     // get new uc_list
@@ -1563,8 +1567,8 @@ void UCDataset::split(std::string ucd_part_a, std::string ucd_part_b, float rati
     ucd_a->model_name = UCDataset::model_name;
     ucd_a->model_version = UCDataset::model_version;
     ucd_a->describe = UCDataset::describe;
-    ucd_a->add_time = -1;
-    ucd_a->update_time = -1;
+    ucd_a->add_time = getPythonStyleTimestamp();
+    ucd_a->update_time = getPythonStyleTimestamp();
     ucd_a->label_used = UCDataset::label_used;
     for(int i=0; i<count_for_a; i++)
     {
@@ -1588,8 +1592,8 @@ void UCDataset::split(std::string ucd_part_a, std::string ucd_part_b, float rati
     ucd_b->model_name = UCDataset::model_name;
     ucd_b->model_version = UCDataset::model_version;
     ucd_b->describe = UCDataset::describe;
-    ucd_b->add_time = -1;
-    ucd_b->update_time = -1;
+    ucd_b->add_time = getPythonStyleTimestamp();
+    ucd_b->update_time = getPythonStyleTimestamp();
     ucd_b->label_used = UCDataset::label_used;
     for(int i=count_for_a; i<uc_list.size(); i++)
     {
@@ -1642,6 +1646,13 @@ void UCDataset::split_by_date(std::string save_dir, std::string save_name)
         std::cout << "save " << iter->first << " : " << uc_date_map[iter->first].size() << std::endl;
         std::string save_path;
         UCDataset * ucd = new UCDataset();
+        ucd->dataset_name = UCDataset::dataset_name;
+        ucd->model_name = UCDataset::model_name;
+        ucd->model_version = UCDataset::model_version;
+        ucd->describe = UCDataset::describe;
+        ucd->add_time = getPythonStyleTimestamp();
+        ucd->update_time = getPythonStyleTimestamp();
+        ucd->label_used = UCDataset::label_used;
         for(int i=0; i<uc_date_map[iter->first].size(); i++)
         {
             std::string uc = uc_date_map[iter->first][i];
@@ -1758,6 +1769,7 @@ void UCDataset::absorb(std::string meat_ucd, std::string save_path, std::string 
         bar.progress(i, N);
     }
     bar.finish();
+    UCDataset::update_time = getPythonStyleTimestamp();
     UCDataset::save_to_ucd(save_path);
     delete ucd;
 }
@@ -1812,9 +1824,9 @@ void UCDataset::devide(std::string save_path, int devide_count)
         new_ucd->model_version  = UCDataset::model_version;
         new_ucd->model_name     = UCDataset::model_name;
         new_ucd->describe       = UCDataset::describe;
-        new_ucd->add_time       = UCDataset::add_time;
-        new_ucd->update_time    = -1;
         new_ucd->label_used     = UCDataset::label_used;
+        new_ucd->add_time       = getPythonStyleTimestamp(); 
+        new_ucd->update_time    = getPythonStyleTimestamp(); 
 
         for(int j=0; j<uc_list_map[i].size(); j++)
         {
@@ -3539,6 +3551,8 @@ void UCDatasetUtil::get_ucd_from_img_dir(std::string img_dir, std::string ucd_pa
         bar.progress(i, N);
     }
     bar.finish();
+    ucd->add_time       = getPythonStyleTimestamp();
+    ucd->update_time    = getPythonStyleTimestamp();
     ucd->save_to_ucd(ucd_path);
     delete ucd;
 }
@@ -3568,6 +3582,8 @@ void UCDatasetUtil::get_ucd_from_xml_dir(std::string xml_dir, std::string ucd_pa
         bar.progress(i, N);
     }
     bar.finish();
+    ucd->add_time       = getPythonStyleTimestamp();
+    ucd->update_time    = getPythonStyleTimestamp();
     ucd->save_to_ucd(ucd_path);
 
     // print
@@ -3753,6 +3769,8 @@ void UCDatasetUtil::get_ucd_from_crop_xml(std::string xml_dir, std::string ucd_p
         bar.progress(i, N);
     }
     bar.finish();
+    ucd->add_time       = getPythonStyleTimestamp();
+    ucd->update_time    = getPythonStyleTimestamp();
     ucd->save_to_ucd(ucd_path);
 
     // print
@@ -3837,6 +3855,8 @@ void UCDatasetUtil::get_ucd_from_huge_xml_dir(std::string xml_dir, std::string s
     // the rest
     if(info_count > 0)
     {
+        ucd->add_time       = getPythonStyleTimestamp();
+        ucd->update_time    = getPythonStyleTimestamp();
         ucd->save_to_huge_ucd(save_dir, save_name, volume_count);
     }
     bar.finish();
@@ -3868,6 +3888,8 @@ void UCDatasetUtil::get_ucd_from_json_dir(std::string json_dir, std::string ucd_
         bar.progress(i, N);
     }
     bar.finish();
+    ucd->add_time       = getPythonStyleTimestamp();
+    ucd->update_time    = getPythonStyleTimestamp();
     ucd->save_to_ucd(ucd_path);
     delete ucd;
 }
@@ -3891,6 +3913,8 @@ void UCDatasetUtil::get_ucd_from_file_dir(std::string file_dir, std::string ucd_
         bar.progress(i, N);
     }
     bar.finish();
+    ucd->add_time       = getPythonStyleTimestamp();
+    ucd->update_time    = getPythonStyleTimestamp();
     ucd->save_to_ucd(ucd_path);
     delete ucd;
 }
@@ -3972,7 +3996,8 @@ void UCDatasetUtil::get_ucd_from_yolo_txt_dir(std::string yolo_txt_dir, std::str
     bar.finish();
     std::cout << "is  uc : " << is_uc_count << std::endl;
     std::cout << "not uc : " << not_uc_count << std::endl;
-
+    ucd->add_time       = getPythonStyleTimestamp();
+    ucd->update_time    = getPythonStyleTimestamp();
     ucd->save_to_ucd(save_ucd_path);
     return;
 }
@@ -4010,6 +4035,8 @@ void UCDatasetUtil::get_ucd_from_dete_server(std::string  dete_server_dir, std::
         bar.progress(i, N);
     }
     bar.finish();
+    ucd->add_time       = getPythonStyleTimestamp();
+    ucd->update_time    = getPythonStyleTimestamp();
     save_ucd->save_to_ucd(save_path);
     delete ucd;
     delete save_ucd;
@@ -4031,6 +4058,8 @@ void UCDatasetUtil::get_ucd_from_uc_list(std::string save_path, std::vector<std:
     }
 
     ucd->unique();
+    ucd->add_time       = getPythonStyleTimestamp();
+    ucd->update_time    = getPythonStyleTimestamp();
     ucd->save_to_ucd(save_path);
     delete ucd;
 }
@@ -4049,6 +4078,8 @@ void UCDatasetUtil::merge_ucds(std::string save_path, std::vector<std::string> u
         std::cout << "  * merge -> " << ucd_path_vector[i] << std::endl;
         ucd->add_ucd_info(ucd_path_vector[i]);
     }
+    ucd->add_time = getPythonStyleTimestamp();
+    ucd->update_time = getPythonStyleTimestamp();
     ucd->save_to_ucd(save_path);
     delete ucd;
 }
@@ -4107,6 +4138,7 @@ void UCDatasetUtil::ucd_minus_obj(std::string save_path, std::string ucd_path_1,
             size_info[uc] = ucd1->size_info[uc];
         }
     }
+    ucd1->update_time = getPythonStyleTimestamp();
     ucd1->save_to_ucd(save_path);
     delete ucd1;
     delete ucd2;
@@ -4150,6 +4182,7 @@ void UCDatasetUtil::ucd_minus_uc(std::string save_path, std::string ucd_path_1, 
         }
     }
     ucd1->uc_list = uc_list_new;
+    ucd1->update_time = getPythonStyleTimestamp();
     ucd1->save_to_ucd(save_path);
     delete ucd1;
     delete ucd2;
@@ -5532,6 +5565,8 @@ void UCDatasetUtil::interset_ucds(std::string save_path, std::string ucd_path_a,
     std::set_intersection(uc_set1.begin(), uc_set1.end(), uc_set2.begin(), uc_set2.end(), std::inserter(uc_intersection, uc_intersection.begin()));
 
     ucd_res->uc_list = uc_intersection;
+    ucd_res->add_time = getPythonStyleTimestamp();
+    ucd_res->update_time = getPythonStyleTimestamp();
     ucd_res->save_to_ucd(save_path);
 }
 
@@ -5780,6 +5815,7 @@ void UCDatasetUtil::fix_size_info(std::string ucd_path, std::string save_path, b
     std::cout << WARNNING_COLOR << "not_need_fix   : " << not_need_fix << STOP_COLOR << std::endl;
 
     bar.finish();
+    ucd->update_time = getPythonStyleTimestamp();
     ucd->save_to_ucd(save_path);
     delete ucd;
     delete size_ucd;

@@ -673,7 +673,7 @@ void UcdParamOpt::load_param_info()
     
     // to_crop
     ParamInfo * param_to_crop = new ParamInfo("to_crop");
-    param_to_crop->group = "opt";
+    param_to_crop->group = "convert";
     param_to_crop->grammar = "ucd to_crop ucd_path save_dir is_split(true|1|True|false|0|False)";
     param_to_crop->args_info["--no_cache"] = "1|True|true 低缓存模式，使用完下载的图片之后会删除，本地已有缓存的不进行删除";
     param_to_crop->args_info["-s"] = "小图放到以其名字命名的文件夹中，设置的话，全部放到一个文件夹中";
@@ -688,7 +688,7 @@ void UcdParamOpt::load_param_info()
     
     // to_assign_crop_xml
     ParamInfo * param_to_assign_crop_xml = new ParamInfo("to_assign_crop_xml");
-    param_to_assign_crop_xml->group = "opt";
+    param_to_assign_crop_xml->group = "convert";
     param_to_assign_crop_xml->grammar = "ucd to_assign_crop_xml ucd_path save_dir assign_tag";
     param_to_assign_crop_xml->args_info["--iou_th"] = "指定根据范围进行删选的时候使用的重复阈值";
     param_to_assign_crop_xml->chinese_explain = "指定标签，根据标签的范围裁剪小图和对应的xml，xml 中包含在指定标签内部的标签";   
@@ -697,7 +697,7 @@ void UcdParamOpt::load_param_info()
     
     // to_assign_crop_txt
     ParamInfo * param_to_assign_crop_txt = new ParamInfo("to_assign_crop_txt");
-    param_to_assign_crop_txt->group = "opt";
+    param_to_assign_crop_txt->group = "convert";
     param_to_assign_crop_txt->grammar = "ucd to_assign_crop_txt ucd_path save_dir assign_tag";
     param_to_assign_crop_txt->args_info["--iou_th"] = "指定根据范围进行删选的时候使用的重复阈值";
     param_to_assign_crop_txt->chinese_explain = "指定标签，根据标签的范围裁剪小图和对应的xml，xml 中包含在指定标签内部的标签";   
@@ -741,7 +741,7 @@ void UcdParamOpt::load_param_info()
     
     // crop_to_xml_with_origin_tag
     ParamInfo * param_crop_to_xml_with_origin_tag = new ParamInfo("crop_to_xml_with_origin_tag");
-    param_crop_to_xml_with_origin_tag->group = "opt";
+    param_crop_to_xml_with_origin_tag->group = "convert";
     param_crop_to_xml_with_origin_tag->grammar = "ucd crop_to_xml_with_origin_tag crop_dir, save_dir";
     param_crop_to_xml_with_origin_tag->english_explain = "cut img to xml";
     param_crop_to_xml_with_origin_tag->chinese_explain = "截图生成 xml，直接使用截图文件名中的标签，作为截图的标签，截图文件夹可以多层嵌套";   
@@ -958,7 +958,7 @@ void UcdParamOpt::load_param_info()
 
     // from_crop
     ParamInfo * param_from_crop = new ParamInfo("from_crop");
-    param_from_crop->group = "opt";
+    param_from_crop->group = "convert";
     param_from_crop->args_info["-o"] = "不使用文件夹的名字作为小图的标签，直接使用小图文件名中包含的标签作为 obj 的 tag";
     param_from_crop->grammar = "ucd from_crop crop_dir save_path";
     param_from_crop->english_explain = "cut img to xml";
@@ -969,7 +969,7 @@ void UcdParamOpt::load_param_info()
     
     // from_assign_crop_xml
     ParamInfo * param_from_assign_crop_xml = new ParamInfo("from_assign_crop_xml");
-    param_from_assign_crop_xml->group = "opt";
+    param_from_assign_crop_xml->group = "convert";
     param_from_assign_crop_xml->grammar = "ucd param_from_assign_crop_xml xml_dir save_path";
     param_from_assign_crop_xml->chinese_explain = "将裁剪后的小图 xml 转为 json";   
     param_from_assign_crop_xml->demo.push_back("ucd from_assign_crop_xml ./crop_xml res.json         (将 ./crop_xml 文件夹中的小图xml 生成 res.json 文件)");

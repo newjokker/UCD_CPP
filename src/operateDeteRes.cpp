@@ -18,6 +18,7 @@
 #include <algorithm>
 #include "ucDatasetUtil.hpp"
 #include "include/tqdm.h"
+#include "include/ucd_tools.hpp"
 
 #define ERROR_COLOR         "\x1b[1;31m"    // 红色
 #define HIGHTLIGHT_COLOR    "\033[1;35m"    // 品红
@@ -182,6 +183,8 @@ void get_ucd_from_crop_img(std::string crop_dir, std::string save_path, bool ori
     bar2.finish();
 
     // save ucd
+    ucd->add_time       = getPythonStyleTimestamp();
+    ucd->update_time    = getPythonStyleTimestamp();
     ucd->save_to_ucd(save_path);
     delete ucd;
 }
@@ -532,6 +535,7 @@ float dete_obj_iou(DeteObj a, DeteObj b)
 
     return rect_iou(x1, y1, h1, w1, x2, y2, h2, w2);
 }
+
 
 //
 

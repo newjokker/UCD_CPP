@@ -41,6 +41,7 @@ namespace jotools
     void rename_xml_img_by_md5(std::string xml_folder, std::string img_folder);
 
 
+
     class DeteAcc
     {
         public:
