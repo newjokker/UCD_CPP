@@ -3157,12 +3157,15 @@ void UCDatasetUtil::load_img_with_assign_uc(std::string save_dir, std::string uc
     {
         if(is_file(img_cache_path))
         {
-            if(is_read_file(img_cache_path))
+            if(!is_read_file(img_cache_path))
             {
                 std::cout << ERROR_COLOR << "img path don't have read acess, use 【sudo chmod 777 】 change the cache img read permission : " << img_cache_path << STOP_COLOR << std::endl;
                 throw "img path don't have read acess";
             }
-            copy_file(img_cache_path, save_img_path);
+            else
+            {
+                copy_file(img_cache_path, save_img_path);
+            }
         }
         else
         {

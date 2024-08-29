@@ -16,5 +16,9 @@ double getPythonStyleTimestamp();
 // 时间戳转为字符串
 std::string timestampToString(double timestamp);
 
+// 删除图片的元数据
+bool remove_image_meta_data(std::string img_path, std::string save_path, int quality=90);
+
+
 
 #endif

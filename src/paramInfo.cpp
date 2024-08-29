@@ -640,6 +640,17 @@ void UcdParamOpt::load_param_info()
     param_count_tags->demo.push_back("ucd count_tags test.uci                       (统计 test.uci 中的各个标签的个数)");   
     UcdParamOpt::add_param(param_count_tags);
     
+    // remove_image_meta_info
+    ParamInfo * param_remove_image_meta_info = new ParamInfo("remove_image_meta_info");
+    param_remove_image_meta_info->group = "opt";
+    param_remove_image_meta_info->args_info["--quality"] = "指定保存文件的质量， 默认为 90";
+    param_remove_image_meta_info->grammar = "ucd remove_image_meta_info img_dir";
+    param_remove_image_meta_info->english_explain = "remove all image meta info in assign folder, (.jpg .png .JPG .PNG)";
+    param_remove_image_meta_info->chinese_explain = "删除指定文件夹下面的所有图片(.jpg .png .JPG .PNG)的元数据";
+    param_remove_image_meta_info->demo.push_back("ucd remove_image_meta_info ./images              (删除 ./images 下面的所有图片的元数据)");   
+    param_remove_image_meta_info->demo.push_back("ucd remove_image_meta_info ./images --quality 80 (删除 ./images 下面的所有图片的元数据, 保存质量为 80)");   
+    UcdParamOpt::add_param(param_remove_image_meta_info);
+    
     // count_uc_by_tags
     ParamInfo * param_count_uc_by_tags = new ParamInfo("count_uc_by_tags");
     param_count_uc_by_tags->group = "info";

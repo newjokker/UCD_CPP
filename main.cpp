@@ -89,7 +89,7 @@ int main(int argc_old, char ** argv_old)
     std::string app_dir     = "/home/ldq/Apps_jokker";
 
     // version
-    std::string app_version = "v4.10.8";
+    std::string app_version = "v4.10.9";
 
     // uci_info
     int volume_size         = 20;
@@ -3288,26 +3288,41 @@ int main(int argc_old, char ** argv_old)
         // 将 ucd 转为 .ucd 格式的代码, 类似于 .sql 脚本能直接运行，
 
     }
-    else if(command_1 == "run")
+    else if(command_1 == "remove_image_meta_info")
     {
-        // 执行复杂的任务，结果不一定是 ucd，结果直接打印出来即可
-        // 设置常用的关键字, count, select, save, drop, filter 等，ucd 先解析命令字符串然后直接运行，类似于 python 那种的形式
-        // ucd run "count nc where uc[:2] == 'CA' and obj.area > 10"
-    }
-    else if(command_1 == "dete")
-    { 
-        // 设置的标准启动模型，发送模型，配置文件和逻辑进去
 
-        // model 使用一个叫做 model_uc 的东西，model 都维护在一个目录中，在 80 服务器上，（需要注意的是，对于大的文件需要解决传输断裂的问题，是不是要将大文件拆分为小文件进行处理）
+        int quality = 90;
+        if(long_args.count("quality") > 0)
+        {
+            quality = std::stoi(long_args["quality"]);
+        }
 
-        // config 和 logic 直接使用二进制文件编码，服务端下载了直接能用就行
+        if(argc == 3)
+        {
+            std::string img_dir = argv[2];
+            std::vector<std::string> file_path_list  = get_all_file_path(img_dir);
+            std::set<std::string> suffix {".jpg", ".png", ".JPG", ".PNG"};
+            std::vector<std::string> img_path_list  = filter_by_suffix(file_path_list, suffix);
+            
+            tqdm bar;
+            int N=img_path_list.size();
+            for(int i=0; i<img_path_list.size(); i++)
+            {
+                bar.progress(i, N);
+                std::string each_img_path = img_path_list[i];
+                bool status = remove_image_meta_data(each_img_path, each_img_path, quality);
+                if(! status)
+                {
+                    std::cout << ERROR_COLOR << "remove image meta failed : " << each_img_path << STOP_COLOR << std::endl;
+                }
+            }
+            bar.finish();
+        }
+        else
+        {
+            ucd_param_opt->print_command_info(command_1);
+        }
 
-        // 
-
-    }
-    else if(command_1 == "chart_gpt")
-    {
-        // 和 chart gpt 进行交互，主要看（1）一点点打印如何实现（2）格式化的输出
     }
     else if(command_1 == "fake_uc")
     {

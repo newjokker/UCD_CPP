@@ -1,4 +1,5 @@
 
+#include <opencv2/opencv.hpp>
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -304,4 +305,21 @@ std::string timestampToString(double timestamp)
     oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
 
     return oss.str();
+}
+
+bool remove_image_meta_data(std::string img_path, std::string save_path, int quality)
+{
+    cv::Mat image = cv::imread(img_path, cv::IMREAD_COLOR);
+    if (!image.data)
+    {
+        std::cout << "Could not open or find the image" << std::endl;
+        return false;
+    }
+
+    std::vector<int> compression_params;
+    compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(quality);
+
+    bool success = cv::imwrite(save_path, image, compression_params);
+    return success;
 }
