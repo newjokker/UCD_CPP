@@ -2559,31 +2559,6 @@ int main(int argc_old, char ** argv_old)
             ucd_param_opt->print_command_info(command_1);
         }
     }
-    else if(command_1 == "server_info")
-    {
-
-        ucd_param_opt->not_ready();
-        return -1;
-
-        // // check if sshpass is installed, apt list --installed | grep sshpass/focal
-        // // c++ run bash 
-        // // use sshpass -p txkj ssh txkj@192.168.3.101 "nvidia-smi"
-        // // ucd server_info 221 101 
-        // // drive | gpu type | free space (gpu)
-
-        // std::system("echo -n '221 : '  && nvidia-smi | sed -n 3p | awk '{print $4, $5, $6}'"); // 执行 UNIX 命令 "ls -l >test.txt"
-        
-        // std::system("echo -n '200 : '  && sshpass -p txkj2020 ssh txkj@192.168.3.200 nvidia-smi | sed -n 3p | awk '{print $4, $5, $6}'"); // 执行 UNIX 命令 "ls -l >test.txt"
-        
-        // std::system("echo -n '155 : '  && sshpass -p ldq ssh ldq@192.168.3.155 nvidia-smi | sed -n 3p | awk '{print $4, $5, $6}'"); // 执行 UNIX 命令 "ls -l >test.txt"
-        
-        // std::system("echo -n '21  : '  && sshpass -p ldq ssh ldq@192.168.3.21 nvidia-smi | sed -n 3p | awk '{print $4, $5, $6}'"); // 执行 UNIX 命令 "ls -l >test.txt"
-        
-        // std::system("echo -n '101 : '  && sshpass -p txkj ssh txkj@192.168.3.101 nvidia-smi | sed -n 3p | awk '{print $4, $5, $6}'"); // 执行 UNIX 命令 "ls -l >test.txt"
-        
-        // std::system("echo -n '132 : '  && sshpass -p txkj ssh txkj@192.168.3.101 nvidia-smi | sed -n 3p | awk '{print $4, $5, $6}'"); // 执行 UNIX 命令 "ls -l >test.txt"
-        
-    }
     else if(command_1 == "get")
     {
         if(argc == 4)
@@ -3446,6 +3421,7 @@ int main(int argc_old, char ** argv_old)
             UCDataset* ucd = new UCDataset(ucd_path);
             ucd->parse_ucd(true);
             ucd->drop_empty_uc();
+            ucd->update_time = getPythonStyleTimestamp();
             ucd->save_to_ucd(save_path);
         }
         else
@@ -3462,6 +3438,7 @@ int main(int argc_old, char ** argv_old)
             UCDataset* ucd = new UCDataset(ucd_path);
             ucd->parse_ucd(true);
             ucd->drop_extra_info();
+            ucd->update_time = getPythonStyleTimestamp();
             ucd->save_to_ucd(save_path);
         }
         else
