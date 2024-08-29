@@ -3117,10 +3117,15 @@ void UCDatasetUtil::load_file(std::string url, std::string save_path, int index)
 
 void UCDatasetUtil::load_img(std::string save_dir, std::vector<std::string> uc_list)
 {
+
     if(! is_dir(save_dir))
     {
-        std::cout << ERROR_COLOR << "save dir not exists : " << save_dir << STOP_COLOR << std::endl;
-        throw "save dir not exists";
+        create_folder(save_dir);
+        if(! is_dir(save_dir))
+        {
+            std::cout << ERROR_COLOR << "create save_dir failed : " << save_dir << STOP_COLOR << std::endl;
+            throw "create save_dir failed";
+        }
     }
 
     std::set<std::string> suffix {".jpg", ".JPG", ".png", ".PNG"};
@@ -3129,28 +3134,7 @@ void UCDatasetUtil::load_img(std::string save_dir, std::vector<std::string> uc_l
     int N = uc_list.size();
     for(int i=0; i<uc_list.size(); i++)
     {
-        std::string img_url = "/file/" + uc_list[i] + ".jpg";
-        std::string save_img_path = save_dir + "/" + uc_list[i] + ".jpg";  
-                
-        if(! is_file(save_img_path))
-        {
-            std::string img_cache_path = get_file_by_suffix_set(UCDatasetUtil::cache_img_dir, uc_list[i], suffix);
-            if(is_file(img_cache_path))
-            {
-                if(is_read_file(img_cache_path))
-                {
-                    copy_file(img_cache_path, save_img_path);
-                }
-                else
-                {
-                    std::cout << WARNNING_COLOR << "img path dont have read access : " << img_cache_path << STOP_COLOR << std::endl;
-                }
-            }
-            else
-            {
-                UCDatasetUtil::load_file(img_url, save_img_path, i); 
-            }
-        }
+        UCDatasetUtil::load_img_with_assign_uc(save_dir, uc_list[i]);
         bar.progress(i, N);
     }
     bar.finish();
@@ -3158,7 +3142,6 @@ void UCDatasetUtil::load_img(std::string save_dir, std::vector<std::string> uc_l
 
 void UCDatasetUtil::load_img_with_assign_uc(std::string save_dir, std::string uc)
 {
-    // todo 这个函数有问题，好像下载下来的数据都是空的
     if(! is_dir(save_dir))
     {
         std::cout << ERROR_COLOR << "save dir not exists : " << save_dir << STOP_COLOR << std::endl;
@@ -3170,19 +3153,15 @@ void UCDatasetUtil::load_img_with_assign_uc(std::string save_dir, std::string uc
     std::string save_img_path = save_dir + "/" + uc + ".jpg";  
     std::string img_url = "/file/" + uc + ".jpg";
 
-
-    // std::cout << "-------------" << std::endl;
-    // std::cout << "save_dir : " << save_dir << std::endl;
-    // std::cout << "uc : " << uc << std::endl;
-    // std::cout << "img_url : " << img_url << std::endl;
-    // std::cout << "save_img_path : " << save_img_path << std::endl;
-    // std::cout << "img_cache_path : " << img_cache_path << std::endl;
-    // std::cout << "-------------" << std::endl;
-
     if(! is_file(save_img_path))
     {
         if(is_file(img_cache_path))
         {
+            if(is_read_file(img_cache_path))
+            {
+                std::cout << ERROR_COLOR << "img path don't have read acess, use 【sudo chmod 777 】 change the cache img read permission : " << img_cache_path << STOP_COLOR << std::endl;
+                throw "img path don't have read acess";
+            }
             copy_file(img_cache_path, save_img_path);
         }
         else

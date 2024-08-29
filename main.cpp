@@ -89,7 +89,7 @@ int main(int argc_old, char ** argv_old)
     std::string app_dir     = "/home/ldq/Apps_jokker";
 
     // version
-    std::string app_version = "v4.10.7";
+    std::string app_version = "v4.10.8";
 
     // uci_info
     int volume_size         = 20;
